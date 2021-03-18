@@ -6,6 +6,7 @@
     version: "{{ certbot_version }}"
     update: "{{ certbot_keep_updated }}"
     force: true
+  become: yes
 
 - name: Set Certbot script variable.
   set_fact:
@@ -15,3 +16,4 @@
   file:
     path: "{{ certbot_script }}"
     mode: 0755
+  become: yes

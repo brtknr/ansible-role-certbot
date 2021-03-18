@@ -3,9 +3,11 @@
   stat:
     path: /etc/letsencrypt/live/{{ cert_item.domains | first | replace('*.', '') }}/cert.pem
   register: letsencrypt_cert
+  become: yes
 
 - name: Retrieve running services.
   service_facts:
+  become: yes
 
 - name: Stop services to allow certbot to generate a cert.
   service:
@@ -15,10 +17,12 @@
     - item in ansible_facts.services
     - not letsencrypt_cert.stat.exists
   with_items: "{{ certbot_create_standalone_stop_services }}"
+  become: yes
 
 - name: Generate new certificate if one doesn't exist.
   command: "{{ certbot_create_command }}"
   when: not letsencrypt_cert.stat.exists
+  become: yes
 
 - name: Start services after cert has been generated.
   service:
@@ -28,3 +32,4 @@
     - item in ansible_facts.services
     - not letsencrypt_cert.stat.exists
   with_items: "{{ certbot_create_standalone_stop_services }}"
+  become: yes
